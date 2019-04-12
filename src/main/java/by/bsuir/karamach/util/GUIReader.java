@@ -36,7 +36,7 @@ public class GUIReader {
 
                 isValidData = true;
 
-                String inputPort = JOptionPane.showInputDialog("Input PORT: ");
+                String inputPort = JOptionPane.showInputDialog("Input server PORT: ");
 
                 if (Validator.isValidPort(inputPort)) {
 
