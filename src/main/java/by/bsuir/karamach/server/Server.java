@@ -8,25 +8,25 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Server implements TcpConnectionListener {
 
     private final List<TcpConnection> connections = new ArrayList<>();
 
     private int port;
+    private ReentrantLock lock;
 
-    public Server(int port) {
+    public Server(int port, ReentrantLock lock) {
+
+        this.lock = lock;
         this.port = port;
     }
-
-//    public static void main(String[] args) {
-//        Server server = new Server();
-//        server.startup();
-//    }
 
     public void startup() {
         JOptionPane.showMessageDialog(null, "Server is running...");
 
+        lock.unlock();
         try (ServerSocket serverSocket = new ServerSocket(port)) {
 
             //noinspection InfiniteLoopStatement

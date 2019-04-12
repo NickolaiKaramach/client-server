@@ -10,29 +10,49 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class FireStarter {
 
-    private static final String README_MESSAGE = "Please input a command to execute:\n" +
-            "1. New - to open new client window.\n" +
-            "2. Exit - to leave app.";
+    private static final String README_MESSAGE =
+            "Please input a command to execute:\n" +
+                    "1. next - to open new client window.\n" +
+                    "2. exit - to leave app.";
+
     private static final String COMMAND_NEXT = "next";
     private static final String COMMAND_EXIT = "exit";
     private static ReentrantLock lock = new ReentrantLock();
 
     public static void main(String[] args) {
 
+        try {
+
+            serverCreationCycle();
+
+            clientWindowCreationCycle();
+
+        } catch (Throwable e) {
+
+            System.out.println("Sorry, an error occurred:\n" + e.getMessage());
+            e.printStackTrace();
+
+        }
+    }
+
+    private static void serverCreationCycle() {
         Thread serverThread = new Thread(() -> {
-            Server server = new Server(GUIReader.readPort());
+
+            lock.lock();
+
+            Server server = new Server(GUIReader.readPort(), lock);
 
             server.startup();
 
             lock.unlock();
         });
 
-        lock.lock();
         serverThread.start();
 
         lock.lock();
+    }
 
-
+    private static void clientWindowCreationCycle() {
         String command;
         boolean isActive = true;
 
@@ -40,7 +60,7 @@ public class FireStarter {
 
             command = JOptionPane.showInputDialog(README_MESSAGE);
 
-            switch (command) {
+            switch (command.toLowerCase()) {
 
                 case COMMAND_NEXT:
 
